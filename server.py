@@ -86,53 +86,40 @@ def hello():
 def update(entity):
     '''update the entities via this interface'''
     global myWorld
+    
+    args = flask_post_json()
 
-    if(request.method == 'POST'):
-      args = flask_post_json()  
-      print args
-      mine = json.dumps(args, separators =(',', ':') )
-      print mine
-      print mine['x']
-      #myWorld.update()
-      return None
-    else:
-      return None
+    if(request.method =="POST"):
+      myWorld.set(entity, args)
+      return json.dumps(myWorld.get(entity) ), 201
+
+    if(request.method =="PUT"): #dont else it mydude
+      #PUT needs code 200 and PUT can be used to update
+      for i in args:
+        myWorld.update(entity, i, args[i]) 
+      return json.dumps(myWorld.get(entity) ), 200
+
 
 @app.route("/world", methods=['POST','GET'])    
 def world():
     '''you should probably return the world here'''
     global myWorld
 
-    if(request.method == 'GET'):
-        test = myWorld.world()
-        print test
-        return test
-    
-    else:
-      #put the thing in there
-      args = flask_post_json()
-      myWorld = args
-
-      return None #myWorld.world(), 201
+    #wow revelation that post can do gets duhduhduh
+    return json.dumps(myWorld.world() ), 200
 
 @app.route("/entity/<entity>")    
 def get_entity(entity):
     '''This is the GET version of the entity interface, return a representation of the entity'''
-    return None
+    return json.dumps(myWorld.get(entity) ), 200
 
 @app.route("/clear", methods=['POST','GET'])
 def clear():
     '''Clear the world out!'''
     global myWorld
+    myWorld.clear()
 
-    if(request.method == 'GET'):
-      myWorld.clear()
-      return '', 201
-   
-    else: #!!! not sure if this is correct
-      args = flask_post_json()
-      myWorld = args
-      return '', 201
+    return json.dumps(myWorld.world() ), 200
 
 
 if __name__ == "__main__":
