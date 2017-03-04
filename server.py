@@ -22,7 +22,7 @@
 
 
 import flask
-from flask import Flask, request
+from flask import Flask, request, redirect
 import json
 app = Flask(__name__)
 app.debug = True
@@ -55,9 +55,15 @@ class World:
         return self.space
 
 # you can test your webservice from the commandline
-# curl -v   -H "Content-Type: appication/json" -X PUT http://127.0.0.1:5000/entity/X -d '{"x":1,"y":1}' 
+# curl -v   -H "Content-Type: application/json" -X PUT http://127.0.0.1:5000/entity/X -d '{"x":1,"y":1}' 
 
 myWorld = World()          
+
+def abort_if_not_exists(args):
+    '''Aborts what's happening if something isn't in the world'''
+    global myWorld
+    if args not in myWorld:
+        abort(404, message="arg {} doesn't exist".format(args))
 
 # I give this to you, this is how you get the raw body/data portion of a post in flask
 # this should come with flask but whatever, it's not my project.
@@ -74,17 +80,40 @@ def flask_post_json():
 @app.route("/")
 def hello():
     '''Return something coherent here.. perhaps redirect to /static/index.html '''
-    return None
+    return redirect("/static/index.html", code=302)
 
 @app.route("/entity/<entity>", methods=['POST','PUT'])
 def update(entity):
     '''update the entities via this interface'''
-    return None
+    global myWorld
+
+    if(request.method == 'POST'):
+      args = flask_post_json()  
+      print args
+      mine = json.dumps(args, separators =(',', ':') )
+      print mine
+      print mine['x']
+      #myWorld.update()
+      return None
+    else:
+      return None
 
 @app.route("/world", methods=['POST','GET'])    
 def world():
     '''you should probably return the world here'''
-    return None
+    global myWorld
+
+    if(request.method == 'GET'):
+        test = myWorld.world()
+        print test
+        return test
+    
+    else:
+      #put the thing in there
+      args = flask_post_json()
+      myWorld = args
+
+      return None #myWorld.world(), 201
 
 @app.route("/entity/<entity>")    
 def get_entity(entity):
@@ -94,7 +123,17 @@ def get_entity(entity):
 @app.route("/clear", methods=['POST','GET'])
 def clear():
     '''Clear the world out!'''
-    return None
+    global myWorld
+
+    if(request.method == 'GET'):
+      myWorld.clear()
+      return '', 201
+   
+    else: #!!! not sure if this is correct
+      args = flask_post_json()
+      myWorld = args
+      return '', 201
+
 
 if __name__ == "__main__":
     app.run()

@@ -12,4 +12,9 @@ Contributors / Licensing
 
 Generally everything is LICENSE'D under the Apache 2 license by Abram Hindle.
 
+Resources used:
+
+Knowledge of redirect library from Xavier Combelle(http://stackoverflow.com/users/128629/xavier-combelle) on Stack Overflow:
+http://stackoverflow.com/questions/14343812/redirecting-to-url-in-flask
+
 
