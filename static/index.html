@@ -80,16 +80,23 @@ function drawCircle(context,entity) {
         var x = entity["x"];
         var y = entity["y"];
         //moveTo(x,y);
-        fillStyle = entity["colour"];
-        strokeStyle = fillStyle;
-        arc(x, y, (entity["radius"])?entity["radius"]:50, 0, 2.0 * Math.PI, false);  
-        stroke();                                
+        //fillStyle = entity["colour"];
+        //strokeStyle = fillStyle;
+        //arc(x, y, (entity["radius"])?entity["radius"]:50, 0, 2.0 * Math.PI, false);  
+        //stroke();
+        //from the advice of my teammates to make this load faster, I used new Image instead
+        //referenced http://www.techrepublic.com/article/preloading-and-the-javascript-image-object/
+        var pikachu = new Image();
+        pikachu.src = "pikachu.png";
+        var theCanvas = document.getElementById("c");
+        //var canvasUh = theCanvas.getContext("2d");
+        drawImage(pikachu, x, y);                                
     }
 }
 
 function prepEntity(entity) {
-    if (!entity["colour"]) {
-        entity["colour"] = "#FF0000";
+    if (!entity["image"]) {
+        entity["image"] = "pikachu";
     }
     if (!entity["radius"]) {
         entity["radius"] = 50;
@@ -264,16 +271,17 @@ mouse = (function() {
 
 // Add the application specific mouse listeners!
 //XXX: TODO Make these prettier!
+//don't need to do a lot here, I'm not drawing anything with code
 mouse.mousedowners.push(function(x,y,clicked,e) {
-    addEntityWithoutName({'x':x,'y':y,'colour':'blue'});
+    addEntityWithoutName({'x':x,'y':y,'image':'pikachu'});
 });
 
 mouse.mouseuppers.push(function(x,y,clicked,e) {
-    addEntityWithoutName({'x':x,'y':y,'colour':'red'});
+    addEntityWithoutName({'x':x,'y':y,'image':'pikachu'});
 });
 
 mouse.mousedraggers.push(function(x,y,clicked,e) {
-    addEntityWithoutName({'x':x,'y':y,'colour':'green',
+    addEntityWithoutName({'x':x,'y':y,'image':'pikachu',
                           'radius':10});
 });
 
