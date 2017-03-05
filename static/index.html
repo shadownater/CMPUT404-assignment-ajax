@@ -40,10 +40,10 @@ function sendJSONXMLHTTPRequest(url, objects, callback) {
                 if (xhr.status==200) {
                     //XXX: parse some JSON from the request!
                     //XXX: Pass the data to the callback!
-                    console.log(objects);
-                    JSON.parse(xhr.responseText);
-                    //callback( xhr.responseText );
-                    } 
+                    if (callback != null){ 
+                      callback(JSON.parse(xhr.responseText) );
+                    }
+                } 
                     
                     
                 
@@ -57,7 +57,12 @@ function sendJSONXMLHTTPRequest(url, objects, callback) {
     //XXX: set the mimetype and the accept headers!
     // Remember to use application/json !
     
-    //credit to 
+    /*
+    credit to apsillers for help with figuring out how to send the request
+    http://stackoverflow.com/users/710446/apsillers
+    on Stack Overflow
+    http://stackoverflow.com/questions/19661157/how-to-add-header-data-in-xmlhttprequest-when-using-formdata
+    */
     xhr.open('POST', url);
     xhr.setRequestHeader("Accept", "application/json");
     xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
@@ -150,7 +155,7 @@ function addEntity(entity, data) {
     world[entity] = data;
     drawNextFrame(); // (but should we?)
     //XXX: Send a XHTML Request that updates the entity you just modified!
-    sendJSONXMLHTTPRequest("/entity/" + entity, data, update)
+    sendJSONXMLHTTPRequest("/entity/" + entity, data, null)
 
 }
 
@@ -276,9 +281,14 @@ mouse.mousedraggers.push(function(x,y,clicked,e) {
 function update() {
     //XXX: TODO Get the world from the webservice using a XMLHTTPRequest
     sendJSONXMLHTTPRequest("/world", null, function(x){
-      alert("Wow I'm a callback in action!");
-        alert(x);
-
+      //help with the callback from kobitoko (Ryan Satyabrata)
+      //because I had no idea what Im supposed to callback to DO exactly
+      //https://github.com/kobitoko/CMPUT404-assignment-ajax/blob/master/static/index.html
+      //console.log(x);
+      if( world !== x) {
+            world = x; //oo so world is the shared values between clients ahh ok
+            drawNextFrame();
+        }
     });
     drawFrame();
 }
