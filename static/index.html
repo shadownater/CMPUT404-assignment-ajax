@@ -40,11 +40,11 @@ function sendJSONXMLHTTPRequest(url, objects, callback) {
                 if (xhr.status==200) {
                     //XXX: parse some JSON from the request!
                     //XXX: Pass the data to the callback!
-                    callback( xhr.responseText );
-                    } else {
-                      alert("There was an error " + xhr.status);
-                    }
-                    //JSON.parse();
+                    console.log(objects);
+                    JSON.parse(xhr.responseText);
+                    //callback( xhr.responseText );
+                    } 
+                    
                     
                 
             } 
@@ -56,6 +56,12 @@ function sendJSONXMLHTTPRequest(url, objects, callback) {
     //XXX: POST to a URL
     //XXX: set the mimetype and the accept headers!
     // Remember to use application/json !
+    
+    //credit to 
+    xhr.open('POST', url);
+    xhr.setRequestHeader("Accept", "application/json");
+    xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+    xhr.send(JSON.stringify(objects) );
 }
 
 
@@ -144,11 +150,7 @@ function addEntity(entity, data) {
     world[entity] = data;
     drawNextFrame(); // (but should we?)
     //XXX: Send a XHTML Request that updates the entity you just modified!
-    //sendJSONXMLHTTPRequest("/entity/<entity>", data, callback)
-    console.log("The entity")
-    console.log(entity)
-    console.log("The data")
-    console.log(data)
+    sendJSONXMLHTTPRequest("/entity/" + entity, data, update)
 
 }
 
